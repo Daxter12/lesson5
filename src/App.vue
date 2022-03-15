@@ -1,28 +1,56 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <div id="nav">
+      <router-link to="/dashboard">DashBoard</router-link> /
+      <router-link to="/about">About</router-link>
+    </div>
+    <div class="main">
+      <router-view />
+    </div>
+
+    <dash-board v-if="false" />
+    <about v-if="false" />
+
+    <!-- <dash-board v-if="page === 'dashboard'" />
+    <about v-if="page === 'about'" /> -->
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+  import About from "./views/About.vue";
+  import DashBoard from "./views/DashBoard.vue";
 
-export default {
-  name: 'App',
-  components: {
-    HelloWorld
-  }
-}
+  export default {
+    name: "App",
+    components: {
+      DashBoard,
+      About,
+    },
+    data() {
+      return {
+        page: "",
+      };
+    },
+    methods: {
+      setPage() {
+        this.page = location.pathname.slice(1);
+        console.log(this.page);
+      },
+    },
+    mounted() {
+      const links = document.querySelectorAll("a");
+      links.forEach((link) => {
+        link.addEventListener("click", (event) => {
+          event.preventDefault();
+          history.pushState({}, "", link.href);
+          this.setPage();
+        });
+      }),
+        this.setPage();
+      window.addEventListener("popstate", this.setPage);
+    },
+    beforeDestroy() {
+      window.removeEventListener("popstate", this.setPage);
+    },
+  };
 </script>
-
-<style lang="scss">
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
-</style>
